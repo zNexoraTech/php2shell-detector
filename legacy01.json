@@ -1,0 +1,1 @@
+{"host":"legacy01","date":"2026-10-22T05:00:00","cves":["CVE-2026-109618","CVE-2026-109619"],"runtimes":[{"runtime":"php-cli","version":"7.4.33","status":"EOL","detail":"branch 7.4 end-of-life."}],"notes":[],"overall_exit":1,"mod_php":true}

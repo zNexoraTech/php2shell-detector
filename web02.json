@@ -1,0 +1,1 @@
+{"host":"web02","date":"2026-10-22T05:00:00","cves":["CVE-2026-109618","CVE-2026-109619"],"runtimes":[{"runtime":"php-fpm8.4","version":"8.4.27","status":"PATCHED","detail":"8.4.27 >= fixed 8.4.27."}],"notes":[],"overall_exit":0}
