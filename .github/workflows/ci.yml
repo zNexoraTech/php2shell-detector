@@ -1,0 +1,54 @@
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Byte-compile Python
+        run: python3 -m py_compile scripts/*.py
+
+      - name: Bash syntax check
+        run: bash -n scripts/php2shell-detect.sh
+
+      - name: Smoke test (runs read-only, no PHP present)
+        run: |
+          python3 scripts/php2shell_detect.py || true
+          python3 scripts/php2shell_detect.py --json
+
+      - name: Classifier self-test
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, "scripts")
+          import php2shell_detect as d
+          checks = {
+              "8.3.36": "PATCHED",
+              "8.3.35": "VULNERABLE",
+              "8.3.30-1ubuntu1": "VULNERABLE",
+              "8.2.35": "PATCHED",
+              "8.4.27": "PATCHED",
+              "8.5.11": "VULNERABLE",
+              "8.1.33": "EOL",
+              "7.4.33": "EOL",
+              "8.6.0": "UNKNOWN",
+          }
+          bad = 0
+          for ver, want in checks.items():
+              got, _ = d.classify_version(ver)
+              ok = got == want
+              bad += not ok
+              print(f"{'ok ' if ok else 'BAD'} {ver} -> {got} (want {want})")
+          sys.exit(1 if bad else 0)
+          PY
